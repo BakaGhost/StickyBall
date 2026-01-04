@@ -9,22 +9,24 @@ public class Oscillation : MonoBehaviour
     public float MyAngle;
     void Update()
     {
-        if (transform.eulerAngles.z < MyAngle - 60)
+        float angleDifference = Mathf.DeltaAngle(MyAngle, transform.eulerAngles.z);
+
+        if (angleDifference < -60)
         {
             droite = false;
         }        
-        if  (transform.eulerAngles.z > MyAngle + 60)
+        if (angleDifference > 60)
         {
             droite = true;
         }
         
         if (droite)
         {
-            transform.Rotate(Vector3.forward, -RotationSpeed*Time.deltaTime );
+            transform.Rotate(Vector3.forward, -RotationSpeed * Time.deltaTime);
         }
         else
         {
-            transform.Rotate(Vector3.forward, RotationSpeed*Time.deltaTime );
+            transform.Rotate(Vector3.forward, RotationSpeed * Time.deltaTime);
         }
 
         if (ScriptDash.Touche == true)

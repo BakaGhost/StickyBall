@@ -6,9 +6,9 @@ PhysicsMaterial2D:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Physics Material 2D
+  m_Name: FrictionPlayer
   serializedVersion: 2
-  friction: 100
+  friction: 10
   bounciness: 0
-  m_FrictionCombine: 1
+  m_FrictionCombine: 4
   m_BounceCombine: 4
