@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Dash : MonoBehaviour
@@ -15,22 +16,28 @@ public class Dash : MonoBehaviour
     // --- VARIABLES ---
     private Rigidbody2D rb;
     private Collider2D col;
-    private PhysicsMaterial2D matPhysique;
+    // private PhysicsMaterial2D matPhysique;
     private float tempsEcoule;
+    private float timerImmune;
     private bool pressed;
-
-    // Timer pour empêcher le mur d'annuler le saut
-    private float cooldownDash = 0f; 
-
+    private bool Dashing = false;
+    
+    public CameraScript cameraEffect;
+    
     [Header("Réglages Dash")]
     public Transform flechePos;
     public float force;
     
     [Header("Adhérence")]
-    public float forceCollage = 20f; // La force max quand on colle
-    private float forceAdherence;    // La force actuelle (variable)
+    public float forceCollage = 20f;
+    private float forceAdherence;    
     private float vitesseMaxGlissade;
-    [Range(0f, 0.1f)] public float DurréeChute;
+    [Range(0f, 10f)] public float DurréeChute;
+    private float TimerChute;
+    
+    // [Header("Effet Pendouille")]
+    // public float vitessePendouille = 5f;
+    // public float anglePendouille = 10f; 
 
     [Header("Générateur de Courbe")]
     public bool modeAutomatique = true;
@@ -59,7 +66,6 @@ public class Dash : MonoBehaviour
     private float SensGlissade;
     private float Gravity;
     
-    // États simplifiés
     private bool AuSol;
     private bool AuPlafond;
     
@@ -67,14 +73,16 @@ public class Dash : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
+        rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
 
-        matPhysique = new PhysicsMaterial2D("MatJoueur");
-        matPhysique.friction = 0f;
-        col.sharedMaterial = matPhysique;
+        // matPhysique = new PhysicsMaterial2D("MatJoueur");
+        // matPhysique.friction = 0f;
+        // col.sharedMaterial = matPhysique;
 
         if (modeAutomatique) GenererCourbe();
         Gravity = rb.gravityScale;
         forceAdherence = forceCollage;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
     }
 
     void OnValidate() { if (modeAutomatique) GenererCourbe(); }
@@ -96,24 +104,31 @@ public class Dash : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space)) pressed = true;
-        if (cooldownDash > 0) cooldownDash -= Time.deltaTime;
     }
 
     void FixedUpdate()
     {
+        if (timerImmune > 0)
+        {
+            timerImmune -= Time.deltaTime;
+        }
+        
         if (pressed)
         {
+            timerImmune = 0.1f;
             Vector2 direction = new Vector2(flechePos.position.x - transform.position.x, flechePos.position.y - transform.position.y);
             direction.Normalize();
-            
-            matPhysique.friction = 0f;
-            col.sharedMaterial = matPhysique;
-
-            cooldownDash = 0.2f; 
+            forceAdherence = 0f;
+            // matPhysique.friction = 0f;
             rb.gravityScale = Gravity; 
-
+            StartCoroutine(DesactiverCollider());
             rb.AddForce(direction * force, ForceMode2D.Impulse);
             pressed = false;
+            if (cameraEffect != null)
+            {
+                // On envoie la direction du dash pour que la caméra aille à l'opposé
+                cameraEffect.DeclencherLagDash(direction);
+            }
         }
     }
 
@@ -121,99 +136,106 @@ public class Dash : MonoBehaviour
     {
         if (other.contactCount > 0)
         {
-            if (cooldownDash > 0) return;
-
             Touche = true;
             tempsEcoule = 0f;
             
-            // Stop net pour coller
             rb.linearVelocity = Vector2.zero; 
             
             ContactPoint2D contact = other.GetContact(0);
             normale = contact.normal;
+            if (cameraEffect != null)
+            {
+                cameraEffect.DeclencherImpact(normale, other.relativeVelocity);
+            }
         }
-        // On remet l'adhérence au max à chaque impact
+
+        TimerChute = DurréeChute;
         forceAdherence = forceCollage;
         Debug.Log("Impact");
     }
 
     public void OnCollisionStay2D(Collision2D other)
     {
-        if (cooldownDash > 0) return;
-
         if (other.contactCount > 0)
         {
+            if (Dashing)
+            {
+                forceAdherence = 0f;
+                return;
+            }
             ContactPoint2D contact = other.GetContact(0);
             normale = contact.normal;
 
             float signedAngle = Vector2.SignedAngle(Vector2.right, normale);
             float angle = (signedAngle < 0) ? signedAngle + 360 : signedAngle;
-            Debug.Log(angle);
             
-            // On définit le plafond (le haut du cercle)
+            
             AuSol = (angle >= angleMinSol && angle <= angleMaxSol);
             AuPlafond = (angle > 260 && angle < 280);
 
             if (AuPlafond)
             {
-                rb.gravityScale = 0f; 
-                forceAdherence = Mathf.Lerp(forceAdherence, 0, DurréeChute);
-                SensGlissade = (rb.linearVelocity.x > 0) ? 1f : -1f;
-                Vector2 tangente = new Vector2(normale.y, -normale.x);
-                rb.AddForce(-normale * forceAdherence);
+                // 1. On diminue le timer privé (pas la variable publique !)
+                TimerChute -= Time.fixedDeltaTime; 
+                Debug.Log(TimerChute);
+
+                if (TimerChute > 0)
+                {
+                    rb.gravityScale = 0f;
+                    rb.AddForce(-normale * forceCollage); 
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+                }
+                else
+                {
+                    // TEMPS ÉCOULÉ :
+                    rb.gravityScale = 1f;
+                }
             }
             else if (AuSol)
             {
-                // --- SOL (AJOUTÉ ICI) ---
-                // On remet la physique normale pour ne pas glisser
                 tempsEcoule = 0f;
                 rb.gravityScale = Gravity;
-                
-                // On met une friction élevée pour s'arrêter net au sol
-                matPhysique.friction = frictionInitiale; 
+                // matPhysique.friction = frictionInitiale; 
                 forceAdherence = forceCollage;
             }
             else 
             {
-                // --- MUR (Tout le reste) ---
-                // Ni sol, ni plafond = Mur (Pas de trou possible)
-                
-                forceAdherence = forceCollage; // On colle fort
-                rb.gravityScale = 0f;          // Pas de gravité
-
-                // Détection auto du sens : Mur Droite (x<0) -> -1, Mur Gauche (x>0) -> 1
+                rb.gravityScale = 0f; 
                 SensGlissade = (normale.x < 0) ? -1f : 1f;
-
                 Glisser();
+                Debug.Log(angle);
             }
         }
     }
-
     void Glisser()
     {
         tempsEcoule += Time.fixedDeltaTime;
         float valeurCourbe = courbeFriction.Evaluate(tempsEcoule);
-
-        // 1. Calcul Direction
+        
         Vector2 tangente = new Vector2(normale.y, -normale.x);
 
-        // 2. Vitesse (Longitudinal)
         Vector2 VitesseGlissade = tangente * SensGlissade * valeurCourbe;
         Vector2 VitesseCollage = -normale * forceAdherence;
-        rb.linearVelocity = VitesseCollage+VitesseGlissade;
+        transform.Translate((VitesseCollage+VitesseGlissade)*Time.deltaTime, Space.World);
 
-        // 3. Adhérence (Transversal)
-        // Utilise la variable forceAdherence (qui est 0 au plafond, et 20 sur les murs)
+
         Debug.DrawRay(transform.position, tangente * SensGlissade * 2f, Color.green);
         Debug.DrawRay(transform.position, -normale * 2f, Color.blue);
     }
-
     public void OnCollisionExit2D(Collision2D other)
     {
-        rb.gravityScale = Gravity;
+        TimerChute = DurréeChute;
         Touche = false;
-        matPhysique.friction = 0f;
-        col.sharedMaterial = matPhysique;
+        // matPhysique.friction = 0f;
+        // col.sharedMaterial = matPhysique;
         forceAdherence = forceCollage;
+    }
+    System.Collections.IEnumerator DesactiverCollider()
+    {
+        Dashing = true;
+        col.enabled = false;
+        yield return new WaitForSeconds(0.1f);
+        col.enabled = true;
+        Dashing =  false;
     }
 }
