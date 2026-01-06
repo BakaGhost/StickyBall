@@ -4,6 +4,7 @@ public class Oscillation : MonoBehaviour
 {
 
     public float RotationSpeed;
+    public float RotationUltraSpeed;
     private float angleDifference;
     public bool droite;
     public Dash ScriptDash;
@@ -31,11 +32,27 @@ public class Oscillation : MonoBehaviour
         }
         if (droite)
         {
-            transform.Rotate(Vector3.forward, -RotationSpeed * Time.deltaTime);
+            if (angleDifference > 30)
+            {
+                transform.Rotate(Vector3.forward, -RotationSpeed * Time.deltaTime);
+            }
+            else
+            {
+                transform.Rotate(Vector3.forward, -RotationUltraSpeed * Time.deltaTime);
+                Debug.Log("Je speed");
+            }
         }
         else
         {
-            transform.Rotate(Vector3.forward, RotationSpeed * Time.deltaTime);
+            if (angleDifference < -30)
+            {
+                transform.Rotate(Vector3.forward, RotationSpeed * Time.deltaTime);
+            }
+            else
+            {
+                transform.Rotate(Vector3.forward, RotationUltraSpeed * Time.deltaTime);
+                Debug.Log("Je speed");
+            }
         }
         Debug.DrawRay(transform.position, ScriptDash.normale * 2f, Color.red);
     }
