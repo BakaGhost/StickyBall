@@ -5,6 +5,8 @@ public class CameraScript : MonoBehaviour
     [Header("Réglages Dynamiques")]
     [Tooltip("Multiplicateur pour convertir la vitesse en force de secousse")]
     public float multiplicateurVitesse = 0.5f;
+
+    public float forceMax = 50f;
     
     [Header("Réglages Élastique (Spring)")]
     [Tooltip("La rigidité du ressort. Plus c'est haut, plus le retour est sec.")]
@@ -80,6 +82,8 @@ public class CameraScript : MonoBehaviour
     {
         float intensite = vitesseImpact.magnitude * multiplicateurVitesse;
         intensite = Mathf.Max(intensite, forceMin);
+        Debug.Log(intensite);
+        intensite = Mathf.Clamp(intensite, forceMin, forceMax);
         velocitySpring = new Vector3(-normaleCollision.x, -normaleCollision.y, 0) * intensite;
         targetZoom = 0f;
         velocityZoomSpring = -forceDezoomImpact;
