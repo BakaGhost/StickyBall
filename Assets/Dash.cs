@@ -23,7 +23,7 @@ public class Dash : MonoBehaviour
     private bool Dashing = false;
     
     public CameraScript cameraEffect;
-    
+    public ParticleSystem Particule;
     [Header("Réglages Dash")]
     public Transform flechePos;
     public float force;
@@ -149,6 +149,10 @@ public class Dash : MonoBehaviour
             }
         }
 
+        Particule.transform.up = normale;
+        var Emission =  Particule.emission;
+        Emission.enabled = true;
+        Particule.Play();
         TimerChute = DurréeChute;
         forceAdherence = forceCollage;
         Debug.Log("Impact");
@@ -229,6 +233,8 @@ public class Dash : MonoBehaviour
         // matPhysique.friction = 0f;
         // col.sharedMaterial = matPhysique;
         forceAdherence = forceCollage;
+        // var Emission =  Particule.emission;
+        // Emission.enabled = false;
     }
     System.Collections.IEnumerator DesactiverCollider()
     {

@@ -267,11 +267,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   multiplicateurVitesse: 4
-  raideur: 50
+  forceMax: 20
+  raideur: 25
   amortissement: 7
   dureeBlocage: 0.15
-  intensiteZoomDash: 2.5
-  forceDezoomImpact: 60
+  intensiteZoomDash: 1.5
+  forceDezoomImpact: 30
   MultiSpeedZoom: 5
   MultiSpeedDeZoom: 0.5
 --- !u!4 &250780414
@@ -414,6 +415,16 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!198 &414548183 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 7397962187643764687, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+  m_PrefabInstance: {fileID: 1571223978}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &414548185 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4439003495543993508, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+  m_PrefabInstance: {fileID: 1571223978}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &501306414
 GameObject:
   m_ObjectHideFlags: 0
@@ -1673,7 +1684,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c85392d18165c9498e8f0e9891fb6cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RotationSpeed: 45
+  RotationSpeed: 75
+  RotationUltraSpeed: 120
   droite: 0
   ScriptDash: {fileID: 1774532343}
   MyAngle: 0
@@ -1866,6 +1878,91 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!1001 &1571223978
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1774532345}
+    m_Modifications:
+    - target: {fileID: 4439003495543993508, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.21000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439003495543993508, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.21000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439003495543993508, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439003495543993508, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439003495543993508, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439003495543993508, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439003495543993508, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439003495543993508, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439003495543993508, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439003495543993508, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439003495543993508, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439003495543993508, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5324511643698491388, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_Name
+      value: Particle System
+      objectReference: {fileID: 0}
+    - target: {fileID: 5324511643698491388, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7397962187643764687, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: lengthInSec
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7397962187643764687, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: ShapeModule.angle
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7397962187643764687, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 7397962187643764687, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
+      propertyPath: InitialModule.gravityModifier.scalar
+      value: 3
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: cb84bbaca350f844791ec834c88909d0, type: 3}
 --- !u!1 &1774532341
 GameObject:
   m_ObjectHideFlags: 0
@@ -1926,6 +2023,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraEffect: {fileID: 250780413}
+  Particule: {fileID: 414548183}
   flechePos: {fileID: 215782276}
   force: 10
   forceCollage: 1
@@ -2071,6 +2169,7 @@ Transform:
   m_Children:
   - {fileID: 1228955447}
   - {fileID: 250780414}
+  - {fileID: 414548185}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!58 &1774532346
