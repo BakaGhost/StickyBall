@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 48c018238e5442540b92d2f0f7cc8c3d
+guid: 19a40a1080da7a04e8aeadf292797fbc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3483929789013115909
-    second: Fichier 10_0
-  - first:
-      213: 4619439873186778937
-    second: Fichier 10_1
+      213: -7158546448031274712
+    second: mur3_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -103,35 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Fichier 10_0
+      name: mur3_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 123
-        width: 199
-        height: 145
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: bfbb877c05896afc0800000000000000
-      internalID: -3483929789013115909
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Fichier 10_1
-      rect:
-        serializedVersion: 2
-        x: 73
         y: 0
-        width: 53
-        height: 185
+        width: 148
+        height: 5787
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -140,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 93fc29ef61c8b1040800000000000000
-      internalID: 4619439873186778937
+      spriteID: 82926f0eeebb7ac90800000000000000
+      internalID: -7158546448031274712
       vertices: []
       indices: 
       edges: []
@@ -160,8 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Fichier 10_0: -3483929789013115909
-      Fichier 10_1: 4619439873186778937
+      mur3_0: -7158546448031274712
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
