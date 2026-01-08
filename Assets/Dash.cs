@@ -12,7 +12,18 @@ public class Dash : MonoBehaviour
         public float friction;
         public float inclinaison;
     }
+    
+    public GameObject RealGuide;
+    public GameObject triangle;
+    public Sprite PetiteF;
+    public Sprite GrandF;
 
+    [Header("Audio")]
+    public AudioSource sourceAudio; 
+    public AudioClip sonDash;     
+    public AudioClip sonImpact;
+    public AudioClip sonGlissade;
+    
     // --- VARIABLES ---
     private Rigidbody2D rb;
     private Collider2D col;
@@ -67,7 +78,12 @@ public class Dash : MonoBehaviour
     private float Gravity;
     
     private bool AuSol;
-    private bool AuPlafond;
+    [HideInInspector]
+    public bool AuPlafond;
+    [System.NonSerialized]
+    public bool Enter = false;
+    private bool CanJump = false;
+    
     
     void Start()
     {
@@ -112,15 +128,16 @@ public class Dash : MonoBehaviour
         {
             timerImmune -= Time.deltaTime;
         }
-        
-        if (pressed)
+
+        if (pressed && CanJump)
         {
             timerImmune = 0.1f;
-            Vector2 direction = new Vector2(flechePos.position.x - transform.position.x, flechePos.position.y - transform.position.y);
+            Vector2 direction = new Vector2(flechePos.position.x - transform.position.x,
+                flechePos.position.y - transform.position.y);
             direction.Normalize();
             forceAdherence = 0f;
             // matPhysique.friction = 0f;
-            rb.gravityScale = Gravity; 
+            rb.gravityScale = Gravity;
             StartCoroutine(DesactiverCollider());
             rb.AddForce(direction * force, ForceMode2D.Impulse);
             pressed = false;
@@ -129,11 +146,22 @@ public class Dash : MonoBehaviour
                 // On envoie la direction du dash pour que la caméra aille à l'opposé
                 cameraEffect.DeclencherLagDash(direction);
             }
+            
+            RealGuide.SetActive(false);
+            
+            sourceAudio.Stop();
+            sourceAudio.clip = sonDash;
+            sourceAudio.volume = 1f;
+            sourceAudio.Play();
+            CanJump = false;
         }
     }
 
     public void OnCollisionEnter2D(Collision2D other)
     {
+        CanJump = true;
+        Enter = true;
+        ContactPoint2D contact;
         if (other.contactCount > 0)
         {
             Touche = true;
@@ -141,21 +169,31 @@ public class Dash : MonoBehaviour
             
             rb.linearVelocity = Vector2.zero; 
             
-            ContactPoint2D contact = other.GetContact(0);
+            contact = other.GetContact(0);
             normale = contact.normal;
             if (cameraEffect != null)
             {
                 cameraEffect.DeclencherImpact(normale, other.relativeVelocity);
             }
         }
-
-        Particule.transform.up = normale;
+        contact = other.GetContact(0);
+        Particule.transform.position = contact.point;
+        Particule.transform.forward = normale;
         var Emission =  Particule.emission;
         Emission.enabled = true;
         Particule.Play();
         TimerChute = DurréeChute;
         forceAdherence = forceCollage;
         Debug.Log("Impact");
+        
+        SpriteRenderer TriangleRender = triangle.GetComponent<SpriteRenderer>();
+        TriangleRender.sprite = GrandF;
+        
+        sourceAudio.Stop();
+        sourceAudio.clip = sonImpact;
+        sourceAudio.volume = 1f;
+        sourceAudio.Play();
+        RealGuide.SetActive(true);
     }
 
     public void OnCollisionStay2D(Collision2D other)
@@ -209,6 +247,12 @@ public class Dash : MonoBehaviour
                 Glisser();
                 Debug.Log(angle);
             }
+            if (!sourceAudio.isPlaying && !AuSol)
+            {
+                sourceAudio.clip = sonGlissade;
+                sourceAudio.volume = 1f;
+                sourceAudio.Play();
+            }
         }
     }
     void Glisser()
@@ -230,11 +274,13 @@ public class Dash : MonoBehaviour
     {
         TimerChute = DurréeChute;
         Touche = false;
-        // matPhysique.friction = 0f;
-        // col.sharedMaterial = matPhysique;
         forceAdherence = forceCollage;
-        // var Emission =  Particule.emission;
-        // Emission.enabled = false;
+        if (sourceAudio.clip == sonGlissade)
+        {
+            sourceAudio.Stop();
+        }
+        SpriteRenderer TriangleRender = triangle.GetComponent<SpriteRenderer>();
+        TriangleRender.sprite = PetiteF;
     }
     System.Collections.IEnumerator DesactiverCollider()
     {

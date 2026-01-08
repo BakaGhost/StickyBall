@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class Oscillation : MonoBehaviour
 {
-
+    [Header("Audio")]
+    public AudioSource sourceAudio;
+    public AudioClip Tic;
     public float RotationSpeed;
     public float RotationUltraSpeed;
     private float angleDifference;
@@ -25,10 +27,18 @@ public class Oscillation : MonoBehaviour
         if (angleDifference < -60)
         {
             droite = false;
+            sourceAudio.Stop();
+            sourceAudio.clip = Tic;
+            sourceAudio.volume = 1f;
+            sourceAudio.Play();
         }        
         if (angleDifference > 60)
         {
             droite = true;
+            sourceAudio.Stop();
+            sourceAudio.clip = Tic;
+            sourceAudio.volume = 1f;
+            sourceAudio.Play();
         }
         if (droite)
         {
@@ -39,7 +49,6 @@ public class Oscillation : MonoBehaviour
             else
             {
                 transform.Rotate(Vector3.forward, -RotationUltraSpeed * Time.deltaTime);
-                Debug.Log("Je speed");
             }
         }
         else
@@ -51,7 +60,6 @@ public class Oscillation : MonoBehaviour
             else
             {
                 transform.Rotate(Vector3.forward, RotationUltraSpeed * Time.deltaTime);
-                Debug.Log("Je speed");
             }
         }
         Debug.DrawRay(transform.position, ScriptDash.normale * 2f, Color.red);
